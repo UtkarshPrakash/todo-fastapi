@@ -14,6 +14,45 @@ class TodoItem(BaseModel):
     status: str
     due_date: str = None
 
+class SortItem(BaseModel):
+    sort: str
+    limit: int
+
+@app.post('/view')
+def fetch(req: SortItem):
+    orderby = req.sort if req.sort else None
+    cnt = req.limit if req.limit else 5
+    if orderby.lower() not in ('title', 'description', 'priority', 'status'): orderby = None
+
+    conn = sqlite3.connect('test.db')
+    cursor = conn.cursor()
+
+    order_query = """
+        case 
+            when priority = 'High' then 1  
+            when priority = 'Medium' then 2  
+            when priority = 'Low' then 3
+        else 4 end as priority_order,
+        case
+            when status = 'Pending' then 1
+            when status = 'InProgress' then 2
+            when status = 'Done' then 3
+        else 4 end as status_order
+    """
+
+    if orderby:
+        query = f"SELECT id, title, description, priority, status, {order_query} from todo order by {orderby} limit {cnt};"
+    else:
+        query = f"SELECT id, title, description, priority, status from todo limit {cnt};"
+    
+    cursor.execute(query)
+    output = cursor.fetchall()
+    
+    conn.commit()
+    conn.close()
+
+    return output
+
 @app.get('/fetch')
 def fetch(n: int = 5):
     conn = sqlite3.connect('test.db')
@@ -60,3 +99,5 @@ def add_todo(id: int):
     cursor.execute(query)
     conn.commit()
     conn.close()
+
+    return "Delete successful"
