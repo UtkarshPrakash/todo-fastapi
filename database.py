@@ -31,9 +31,10 @@ def insert_query(n: int):
             """
     return query
 
-cursor.execute(insert_query(1))
-cursor.execute(insert_query(2))
-cursor.execute(insert_query(3))
+cursor.execute("INSERT INTO todo(title, description, status, priority, created_at, updated_at) VALUES ('Book Ride', 'Ride a book a home', 'Pending', 'Medium', datetime('now'), datetime('now'))")
+cursor.execute("INSERT INTO todo(title, description, status, priority, created_at, updated_at) VALUES ('Refuel', 'Get scooty refilled', 'Pending', 'High', datetime('now'), datetime('now'))")
+cursor.execute("INSERT INTO todo(title, description, status, priority, created_at, updated_at) VALUES ('Clear Storage', 'Delete some photos from gallery', 'InProgress', 'Low', datetime('now'), datetime('now'))")
+cursor.execute("INSERT INTO todo(title, description, status, priority, created_at, updated_at) VALUES ('Lunch', 'Go and eat lunch', 'Done', 'Medium', datetime('now'), datetime('now'))")
 
 conn.commit()
 
